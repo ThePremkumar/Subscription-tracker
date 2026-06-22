@@ -19,4 +19,4 @@ const arcjectMiddleware = async (req, res, next) => {
     }
 }
 
-export default arcjectMiddleware;
+export default arcjectMiddleware;

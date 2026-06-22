@@ -79,13 +79,12 @@ export const updateSubscription = async (req, res, next) => {
             throw error;
         }
 
-        const updated = await Subscription.findByIdAndUpdate(
-            req.params.id,
-            { ...req.body },
-            { new: true, runValidators: true }
-        );
+        // Use Object.assign and .save() instead of findByIdAndUpdate
+        // so that Mongoose pre-save hooks (like renewalDate recalculation) are triggered.
+        Object.assign(subscription, req.body);
+        await subscription.save();
 
-        res.status(200).json({ success: true, data: updated });
+        res.status(200).json({ success: true, data: subscription });
     } catch (e) {
         next(e);
     }

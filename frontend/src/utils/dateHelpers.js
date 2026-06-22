@@ -17,6 +17,19 @@ export function format(dateInput) {
   }
 }
 
+/** Formats date + time, e.g. "22 Jun 2026, 11:30 AM" — used for email sent timestamp */
+export function formatDateTime(dateInput) {
+  if (!dateInput) return '—';
+  try {
+    const d = new Date(dateInput);
+    const date = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const time = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+    return `${date}, ${time}`;
+  } catch {
+    return '—';
+  }
+}
+
 /**
  * Returns number of days from now to the given date.
  * Negative → date is in the past.

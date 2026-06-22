@@ -28,22 +28,24 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (email, password) => {
     const res = await signIn({ email, password });
-    const { token: t, data } = res.data;
+    // Backend shape: { success, message, data: { token, user } }
+    const { token: t, user } = res.data?.data || {};
     localStorage.setItem('token', t);
-    localStorage.setItem('user', JSON.stringify(data));
+    localStorage.setItem('user', JSON.stringify(user));
     setToken(t);
-    setUser(data);
-    return data;
+    setUser(user);
+    return user;
   }, []);
 
   const register = useCallback(async (name, email, password) => {
     const res = await signUp({ name, email, password });
-    const { token: t, data } = res.data;
+    // Backend shape: { success, message, data: { token, user } }
+    const { token: t, user } = res.data?.data || {};
     localStorage.setItem('token', t);
-    localStorage.setItem('user', JSON.stringify(data));
+    localStorage.setItem('user', JSON.stringify(user));
     setToken(t);
-    setUser(data);
-    return data;
+    setUser(user);
+    return user;
   }, []);
 
   const logout = useCallback(async () => {

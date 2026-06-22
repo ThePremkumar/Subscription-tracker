@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import {
   getUserSubscriptions,
   createSubscription,
+  updateSubscription,
   deleteSubscription,
 } from '../api/endpoints';
 import SubscriptionCard from '../components/SubscriptionCard';
@@ -64,10 +65,19 @@ export default function SubscriptionsPage() {
   const handleSubmit = async (formData) => {
     setSaving(true);
     try {
-      // Create only (edit endpoint is a stub in the backend for now)
-      const res = await createSubscription(formData);
-      setSubscriptions((prev) => [res.data.data, ...prev]);
-      toast.success('Subscription added! 🎉');
+      if (editTarget) {
+        // ── Edit existing subscription ──
+        const res = await updateSubscription(editTarget._id, formData);
+        setSubscriptions((prev) =>
+          prev.map((s) => (s._id === editTarget._id ? res.data.data : s))
+        );
+        toast.success('Subscription updated! ✏️');
+      } else {
+        // ── Create new subscription ──
+        const res = await createSubscription(formData);
+        setSubscriptions((prev) => [res.data.data, ...prev]);
+        toast.success('Subscription added! 🎉');
+      }
       setModalOpen(false);
     } catch (err) {
       const msg = err?.response?.data?.message || 'Failed to save subscription';

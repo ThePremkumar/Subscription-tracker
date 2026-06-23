@@ -12,7 +12,7 @@ function AppLayout({ children }) {
   return (
     <div className="app-layout">
       <Navbar />
-      <main className="main-content">{children}</main>
+      <main className="main-content pb-24 md:pb-8">{children}</main>
     </div>
   );
 }

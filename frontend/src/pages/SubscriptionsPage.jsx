@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Search, CreditCard } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import {
   getUserSubscriptions,
@@ -96,13 +97,18 @@ export default function SubscriptionsPage() {
   });
 
   return (
-    <div className="fade-in">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      className="fade-in flex flex-col gap-6"
+    >
       {/* Header */}
-      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 0 }}>
         <div>
           <h1 className="page-title">Subscriptions</h1>
           <p className="page-subtitle">
-            {subscriptions.length} total · {subscriptions.filter(s => s.status === 'active').length} active
+            {subscriptions.length} total tracked · {subscriptions.filter(s => s.status === 'active').length} active
           </p>
         </div>
         <button
@@ -115,54 +121,65 @@ export default function SubscriptionsPage() {
         </button>
       </div>
 
-      {/* Search */}
-      <div style={{ position: 'relative', marginBottom: '1rem' }}>
-        <Search
-          size={16}
-          style={{
-            position: 'absolute', left: '1rem',
-            top: '50%', transform: 'translateY(-50%)',
-            color: 'var(--color-text-faint)',
-            pointerEvents: 'none',
-          }}
-        />
-        <input
-          id="sub-search"
-          type="text"
-          className="form-input"
-          placeholder="Search subscriptions..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ paddingLeft: '2.5rem', borderRadius: '999px' }}
-        />
+      {/* Filter and Search Panel */}
+      <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        {/* Search */}
+        <div style={{ position: 'relative' }}>
+          <Search
+            size={16}
+            style={{
+              position: 'absolute', left: '1rem',
+              top: '50%', transform: 'translateY(-50%)',
+              color: 'var(--color-text-faint)',
+              pointerEvents: 'none',
+            }}
+          />
+          <input
+            id="sub-search"
+            type="text"
+            className="form-input"
+            placeholder="Search subscriptions..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ paddingLeft: '2.5rem', borderRadius: '999px' }}
+          />
+        </div>
+
+        {/* Filters */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {/* Status filter */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            <span className="text-xs uppercase tracking-wider text-gray-500 font-bold mr-2 shrink-0">Status:</span>
+            {ALL_STATUSES.map((s) => (
+              <button
+                key={s}
+                className={`filter-btn ${statusFilter === s ? 'active' : ''} shrink-0`}
+                onClick={() => setStatusFilter(s)}
+                id={`filter-status-${s}`}
+              >
+                {s.charAt(0).toUpperCase() + s.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {/* Category Filter */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            <span className="text-xs uppercase tracking-wider text-gray-500 font-bold mr-2 shrink-0">Category:</span>
+            {ALL_CATEGORIES.map((c) => (
+              <button
+                key={c}
+                className={`filter-btn ${catFilter === c ? 'active' : ''} shrink-0`}
+                onClick={() => setCatFilter(c)}
+                id={`filter-cat-${c}`}
+              >
+                {c.charAt(0).toUpperCase() + c.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Status filter */}
-      <div className="filter-bar">
-        {ALL_STATUSES.map((s) => (
-          <button
-            key={s}
-            className={`filter-btn ${statusFilter === s ? 'active' : ''}`}
-            onClick={() => setStatusFilter(s)}
-            id={`filter-status-${s}`}
-          >
-            {s.charAt(0).toUpperCase() + s.slice(1)}
-          </button>
-        ))}
-        <span style={{ color: 'var(--color-border)', userSelect: 'none' }}>|</span>
-        {ALL_CATEGORIES.map((c) => (
-          <button
-            key={c}
-            className={`filter-btn ${catFilter === c ? 'active' : ''}`}
-            onClick={() => setCatFilter(c)}
-            id={`filter-cat-${c}`}
-          >
-            {c.charAt(0).toUpperCase() + c.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {/* Cards */}
+      {/* Cards Grid */}
       {loading ? (
         <div className="sub-cards-grid">
           {[...Array(6)].map((_, i) => (
@@ -175,29 +192,46 @@ export default function SubscriptionsPage() {
             <CreditCard size={32} />
           </div>
           <h3>No subscriptions found</h3>
-          <p>
+          <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', maxWidth: '300px' }}>
             {search || statusFilter !== 'all' || catFilter !== 'all'
-              ? 'Try adjusting your filters'
-              : 'Add your first subscription to get started'}
+              ? 'Try adjusting your search query or reset filters.'
+              : 'Add your first subscription to get started tracking.'}
           </p>
           {!search && statusFilter === 'all' && catFilter === 'all' && (
-            <button className="btn btn-primary" onClick={handleAdd} id="empty-add-btn">
+            <button
+              className="btn btn-primary"
+              onClick={handleAdd}
+              id="empty-add-btn"
+            >
               <Plus size={16} />
               Add Subscription
             </button>
           )}
         </div>
       ) : (
-        <div className="sub-cards-grid">
-          {filtered.map((sub) => (
-            <SubscriptionCard
-              key={sub._id}
-              subscription={sub}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
+        <motion.div
+          layout
+          className="sub-cards-grid"
+        >
+          <AnimatePresence mode="popLayout">
+            {filtered.map((sub) => (
+              <motion.div
+                key={sub._id}
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+              >
+                <SubscriptionCard
+                  subscription={sub}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       )}
 
       {/* Modal */}
@@ -208,6 +242,6 @@ export default function SubscriptionsPage() {
         initialData={editTarget}
         isLoading={saving}
       />
-    </div>
+    </motion.div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Zap, Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
@@ -43,7 +44,12 @@ export default function RegisterPage() {
 
   return (
     <main className="auth-page">
-      <div className="auth-card">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', duration: 0.8 }}
+        className="auth-card glass-card"
+      >
         <div className="auth-logo">
           <span className="auth-logo-icon">
             <Zap size={22} color="#fff" />
@@ -152,7 +158,7 @@ export default function RegisterPage() {
             Sign in
           </Link>
         </p>
-      </div>
+      </motion.div>
     </main>
   );
 }

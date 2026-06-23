@@ -1,0 +1,28 @@
+services:
+  backend:
+    build: ./backend
+    container_name: subsription_tracker_backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./backend/.env.production.local
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    container_name: subsription_tracker_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+  
+
+volumes:
+  mongo-data:
+
+networks:
+  app-network:
+    driver: bridge

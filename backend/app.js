@@ -14,26 +14,17 @@ import workflowRouter from "./routes/workflow.routes.js";
 
 const app = express();
 
-// CORS – allow any localhost port in development (Vite picks 5173, 5174… dynamically)
-const allowedOrigins = /^http:\/\/localhost(:\d+)?$/;
-
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, curl, Postman)
-        if (!origin || allowedOrigins.test(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error(`CORS: origin ${origin} not allowed`));
-        }
-    },
-    credentials: true, // Allow cookies (JWT)
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: '*',
+  credentials: false,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// express have build in middlewares
-app.use(express.json());  // this allows our app to handle json data sent in request or API
-app.use(express.urlencoded({extended: false})); //this helps us to process the form data sent via html forms in a simple format.
+app.options('*', cors());
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(arcjectMiddleware);
 
@@ -44,14 +35,13 @@ app.use('/api/v1/workflows', workflowRouter);
 
 app.use(errorMiddleware);
 
-app.get('/',(req, res) =>{
-    res.send('Welcome to the Subsciption Tracker API!');
+app.get('/', (req, res) => {
+  res.send('Welcome to the Subscription Tracker API!');
 });
 
-app.listen(PORT,async () =>  {
-    console.log(`Subscription Tracker API is running on http://localhost:${PORT}`);
-
-    await connectToDatabase();
+app.listen(PORT, async () => {
+  console.log(`Subscription Tracker API is running on http://localhost:${PORT}`);
+  await connectToDatabase();
 });
 
 export default app;

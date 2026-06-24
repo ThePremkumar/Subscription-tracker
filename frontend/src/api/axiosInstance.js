@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1',
-  withCredentials: true, // Send cookies (JWT stored in httpOnly cookie)
+  baseURL: '/api/v1',
+  withCredentials: false,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -27,7 +27,6 @@ API.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Redirect to login
       window.location.href = '/login';
     }
     return Promise.reject(error);

@@ -1,0 +1,15 @@
+userdata.sh
+
+# Local .terraform path
+.terraform/
+
+# Terraform variables
+*.tfvars
+*.tfvars.json
+
+# Terraform state
+*.tfstate
+*.tfstate.backup
+
+# Terraform lockfile
+.terraform.lock.hcl

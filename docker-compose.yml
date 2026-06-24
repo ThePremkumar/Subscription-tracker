@@ -20,9 +20,8 @@ services:
       - app-network
   
 
-volumes:
-  mongo-data:
-
 networks:
   app-network:
     driver: bridge
+
+

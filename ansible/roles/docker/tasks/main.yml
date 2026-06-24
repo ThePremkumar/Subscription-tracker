@@ -1,0 +1,42 @@
+---
+# roles/docker/tasks/main.yml — tasks only, no hosts!
+- name: update the system package
+  dnf:
+    name: "*"
+    state: latest
+
+- name: install docker
+  dnf:
+    name: docker
+    state: present
+
+- name: install docker compose v2 plugin
+  shell: |
+    mkdir -p /usr/local/lib/docker/cli-plugins
+    curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-$(uname -m) -o /usr/local/lib/docker/cli-plugins/docker-compose
+    chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+  args:
+    creates: /usr/local/lib/docker/cli-plugins/docker-compose
+
+- name: start and enable docker
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: add ec2-user to docker group
+  user:
+    name: ec2-user
+    groups: docker
+    append: yes
+
+- name: copy docker-compose.yml to server
+  copy:
+    src: docker-compose.yml
+    dest: /home/ec2-user/docker-compose.yml
+    mode: "0755"
+
+- name: run docker compose
+  command: docker compose up -d
+  args:
+    chdir: /home/ec2-user

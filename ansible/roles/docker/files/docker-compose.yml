@@ -1,0 +1,35 @@
+services:
+  backend:
+    image: thepremkumar/subscriptiontracker-backend:v2
+    container_name: subsription_tracker_backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb+srv://pk:pkpk24@cluster0.drjal9i.mongodb.net/?appName=Cluster0
+      - JWT_SECRET=secret
+      - JWT_EXPIRES_IN=1d
+      - ARCJET_KEY=ajkey_01k4eqryn3fpx88nxc5wkpm92w
+      - ARCJET_ENV=production
+      - QSTASH_URL=https://qstash.upstash.io
+      - QSTASH_TOKEN=eyJVc2VySUQiOiI3ODY3ZGJjOC1mZDNhLTQyMDQtOTYzMS1mMzczOTk4ZjRiODMiLCJQYXNzd29yZCI6ImU3MTQyNWYyYjkzYTQ1NmNiOTc3NTlmNTJmYTViOGNmIn0=
+      - QSTASH_CURRENT_SIGNING_KEY=sig_81Kai6PbWjAEeCgiewZLhhwa7czP
+      - QSTASH_NEXT_SIGNING_KEY=sig_7arUw7ETXKgmd7tmUCPWmMPaXSuN
+      - EMAIL_PASSWORD=byux qrsx alhz jzxq
+    networks:
+      - app-network
+
+  frontend:
+    image: thepremkumar/subscriptiontracker-frontend:v7
+    container_name: subsription_tracker_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

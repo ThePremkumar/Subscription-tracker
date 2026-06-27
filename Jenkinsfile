@@ -19,7 +19,7 @@ pipeline{
         }
         stage("build & SonarQube analysis") {
             steps{
-                withSonarQubeEnv('SonarCloud'){
+                withSonarQubeEnv('SONAR_TOKEN'){
                     sh """
                         sonar-scanner \
                             -Dsonar.organization=thepremkumar \

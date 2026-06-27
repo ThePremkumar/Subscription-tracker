@@ -8,13 +8,13 @@ pipeline{
     stages{
         stage('checkout'){
             steps{
-                checkout scmGit(
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs:[[url: 'https://github.com/ThePremkumar/Subscription-tracker.git']]
-                )
+                // checkout scmGit(
+                //     branches: [[name: '*/main']],
+                //     userRemoteConfigs:[[url: 'https://github.com/ThePremkumar/Subscription-tracker.git']]
+                // )
                 //(or)
                 //checkout scm only works when Jenkins already knows which Git repository the pipeline came from.
-                //checkout scm
+                checkout scm
             }
         }
         stage("build & SonarQube analysis") {
@@ -58,8 +58,7 @@ pipeline{
                 sh "echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin"
                 sh "docker push ${FRONTEND_IMAGE}:${IMAGE_TAG}"
                 sh "docker push ${BACKEND_IMAGE}:${IMAGE_TAG}"
-            }
-            
+            } 
         }
         stage("Deploy"){
             steps{

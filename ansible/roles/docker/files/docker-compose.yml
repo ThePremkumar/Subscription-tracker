@@ -1,6 +1,6 @@
 services:
   backend:
-    image: thepremkumar/subscriptiontracker-backend:v2
+    image: thepremkumar/subscriptiontracker-backend:v3
     container_name: subsription_tracker_backend
     ports:
       - "3000:3000"

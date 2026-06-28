@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import client from 'prom-client';
 
 import { PORT } from './config/env.js';
 
@@ -13,6 +14,9 @@ import arcjectMiddleware from "./middlewares/arcject.middleware.js";
 import workflowRouter from "./routes/workflow.routes.js";
 
 const app = express();
+
+// Prometheus metrics setup
+client.collectDefaultMetrics();
 
 app.use(cors({
   origin: '*',
@@ -27,6 +31,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(arcjectMiddleware);
+
+// Metrics endpoint — before other routes
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.send(await client.register.metrics());
+});
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);

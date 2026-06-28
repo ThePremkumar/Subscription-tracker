@@ -20,14 +20,16 @@ pipeline{
         stage("build & SonarQube analysis") {
             steps{
                 withSonarQubeEnv('Sonarqube_Cloud'){
-                    sh """
-                        sonar-scanner \
-                            -Dsonar.organization=thepremkumar \
-                            -Dsonar.projectKey=ThePremkumar_Subscription-tracker \
-                            -Dsonar.sources=backend \
-                            -Dsonar.host.url=https://sonarcloud.io \
-                            -Dsonar.login=5854569f-8614-4748-8f7e-456fb313678e
-                    """
+                    withEnv(["PATH+SONAR=/opt/sonar-scanner/bin"]) {
+                        sh """
+                            sonar-scanner \
+                                -Dsonar.organization=thepremkumar \
+                                -Dsonar.projectKey=ThePremkumar_Subscription-tracker \
+                                -Dsonar.sources=backend \
+                                -Dsonar.host.url=https://sonarcloud.io \
+                                -Dsonar.login=5854569f-8614-4748-8f7e-456fb313678e
+                        """
+                    }
                 }  
             }
         }

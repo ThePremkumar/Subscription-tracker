@@ -103,6 +103,25 @@ App Live on AWS ALB
 - **Grafana:** http://monitoring-ip:3000
 - **Prometheus:** http://monitoring-ip:9090
 
+## 📸 Project Screenshots
+
+Here are the screenshots showcasing the deployed application, AWS infrastructure, and monitoring setup:
+
+### 1. Live Application
+![Live Application](Output_Screenshot/01-live-app.png)
+
+### 2. AWS EC2 Running Instances
+![EC2 Running Instances](Output_Screenshot/02-ec2-running.png)
+
+### 3. AWS ALB (Application Load Balancer) Healthy Targets
+![ALB Healthy Targets](Output_Screenshot/03-alb-healthy.png.png)
+
+### 4. Grafana Dashboard
+![Grafana Dashboard](Output_Screenshot/04-grafana-dashboard.png)
+
+### 5. Docker Hub Images
+![Docker Hub Images](Output_Screenshot/05-dockerhub-images.png)
+
 ## 👤 Author
 
 **Prem Kumar S**
